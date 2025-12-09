@@ -1,4 +1,3 @@
-```mermaid
 flowchart LR
     %% === CLIENTS ===
     subgraph Clients
@@ -18,9 +17,9 @@ flowchart LR
     A --> WA
 
     %% === PUBLIC EDGE ===
-    subgraph Public_Edge[Public Edge / Internet-facing]
+    subgraph Public_Edge ["Public Edge / Internet-facing"]
         APIGW[API Gateway / Edge]
-        MATCHGW[Match Gateway (WS)]
+        MATCHGW[Match Gateway (WebSocket)]
     end
 
     GC -->|HTTPS / REST| APIGW
@@ -28,7 +27,7 @@ flowchart LR
     GC -->|WebSocket| MATCHGW
 
     %% === INTERNAL SERVICES ===
-    subgraph Internal_Services[Internal Services (Private Network)]
+    subgraph Internal_Services ["Internal Services (Private Network)"]
         AUTH[Auth Service]
         CORE[Core API Service]
         UGC[UGC / Scenario Service]
@@ -42,14 +41,11 @@ flowchart LR
 
     MATCHGW --> MATCH
 
-    MATCH -->|SessionCompleted Events| BROKER
-    CORE --> BROKER
-
-    %% === DATA STORES ===
-    subgraph Data_Stores
-        MAINDB[(Main DB - Users, Sessions, Scenarios)]
-        ANALYTICSDB[(Analytics DB - Aggregated Stats)]
-        STORAGE[(Object Storage - Scenario Assets)]
+    %% === DATA STORES & EVENTS ===
+    subgraph Data_Stores ["Data Stores & Messaging"]
+        MAINDB[(Main DB<br/>Users, Sessions, Scenarios)]
+        ANALYTICSDB[(Analytics DB<br/>Aggregated Stats)]
+        STORAGE[(Object Storage<br/>Scenario Assets)]
         BROKER[(Message Broker)]
     end
 
@@ -57,15 +53,16 @@ flowchart LR
     UGC --> MAINDB
     MATCH --> MAINDB
 
-    ANALYTICS --> ANALYTICSDB
     UGC --> STORAGE
-    MATCH --> BROKER
 
-    %% Analytics consumes events
+    %% Events
+    MATCH -->|SessionCompleted events| BROKER
+    CORE -->|Domain events| BROKER
     BROKER --> ANALYTICS
+    ANALYTICS --> ANALYTICSDB
 
     %% === EXTERNAL INTEGRATIONS ===
-    subgraph External_Integrations
+    subgraph External_Integrations ["External Integrations"]
         STEAM[Steam OAuth]
         STRIPE[Stripe / Payments]
         EMAIL[Email Provider]
@@ -76,5 +73,3 @@ flowchart LR
     CORE --> STRIPE
     CORE --> EMAIL
     ANALYTICS --> DISCORD
-
-```
