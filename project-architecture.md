@@ -1,3 +1,4 @@
+```mermaid
 flowchart LR
     %% === CLIENTS ===
     subgraph Clients
@@ -73,3 +74,5 @@ flowchart LR
     CORE --> STRIPE
     CORE --> EMAIL
     ANALYTICS --> DISCORD
+
+```
